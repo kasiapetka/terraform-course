@@ -1,0 +1,26 @@
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# .tfvars files
+*.tfvars
+
+# .tfplan files
+*.tfplan
+
+# .pem files
+*.pem
+
+# .hcl files from Terraform v0.14 and newer
+*.hcl
+
+# working directory for web app
+/m4_solution/**
+/m5_solution/**
+/m6_solution/**
+/m7_solution/**
+/m8_solution/**
+/m9_solution/**

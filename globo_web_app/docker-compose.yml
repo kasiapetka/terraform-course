@@ -1,0 +1,42 @@
+version: "3"
+services:
+  strapi:
+    container_name: strapi
+    image: strapi
+    build:
+      context: ./
+      target: runner
+      dockerfile: Dockerfile.dev
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_NAME: gimmi
+      DATABASE_HOST: 127.0.0.1
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: gimmi
+      DATABASE_PASSWORD: gimmi
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - "3001:1337"
+    depends_on:
+      - postgres
+    networks:
+      - net
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_DB: gimmi
+      POSTGRES_USER: gimmi
+      POSTGRES_PASSWORD: gimmi
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - net
+
+networks:
+  net:
