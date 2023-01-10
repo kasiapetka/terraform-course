@@ -4,6 +4,12 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "naming_prefix" {
+  type        = string
+  description = "Naming prefix fo all resources"
+  default     = "globoweb"
+}
+
 variable "aws_instance_sizes" {
   type        = map(string)
   description = "AWS instance sizes"
@@ -12,6 +18,18 @@ variable "aws_instance_sizes" {
     medium = "t2.small"
     large  = "t2.large"
   }
+}
+
+variable "vpc_subnet_count" {
+  type        = number
+  description = "Number of subnets in VPC"
+  default     = 2
+}
+
+variable "instance_count" {
+  type        = number
+  description = "Number of instances"
+  default     = 2
 }
 
 variable "vpc_cidr_block" {

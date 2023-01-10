@@ -2,11 +2,11 @@
 data "aws_elb_service_account" "root" {}
 
 resource "aws_lb" "app_lb" {
-  name               = "globo-app-lb"
+  name               =  "${local.name_prefix}-globo-app-lb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [aws_subnet.subnet1.id, aws_subnet.subnet2.id]
+  subnets            = [aws_subnet.subnets[*].id]
 
   enable_deletion_protection = false
 
@@ -21,7 +21,7 @@ resource "aws_lb" "app_lb" {
 }
 
 resource "aws_lb_target_group" "app_lb_tg" {
-  name     = "globo-app-lb-tg"
+  name     = "${local.name_prefix}-globo-app-lb-tg" 
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.vpc.id
@@ -39,14 +39,9 @@ resource "aws_lb_listener" "globo-app" {
   }
 }
 
-resource "aws_lb_target_group_attachment" "app_lb_tg-att1" {
+resource "aws_lb_target_group_attachment" "app_lb_tg-atts" {
+  count            = var.instance_count
   target_group_arn = aws_lb_target_group.app_lb_tg.arn
-  target_id        = aws_instance.nginx1.id
+  target_id        = aws_instance.nginx_instances[count.index].id
   port             = 80
 }
-resource "aws_lb_target_group_attachment" "app_lb_tg-att2" {
-  target_group_arn = aws_lb_target_group.app_lb_tg.arn
-  target_id        = aws_instance.nginx2.id
-  port             = 80
-}
-

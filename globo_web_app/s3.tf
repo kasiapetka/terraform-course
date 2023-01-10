@@ -13,7 +13,7 @@ resource "aws_iam_role" "allow_nginx_s3" {
       },
     ]
   })
-  tags = local.common_tags
+  tags = merge(local.common_tags, { Name = "${local.name_prefix}-allow-nginx" })
 
 }
 
@@ -58,7 +58,7 @@ resource "aws_s3_bucket_policy" "allow_access" {
 }
 
 resource "aws_iam_role_policy" "allow_s3_all" {
-  name = "allow_s3_all"
+  name =  "${local.name_prefix}-allow_s3_all" 
   role = aws_iam_role.allow_nginx_s3.id
 
   # Terraform's "jsonencode" function converts a
@@ -79,16 +79,16 @@ resource "aws_iam_role_policy" "allow_s3_all" {
 }
 
 resource "aws_iam_instance_profile" "nginx_profile" {
-  name = "nginx_profile"
+  name = "${local.name_prefix}-nginx_profile" 
   role = aws_iam_role.allow_nginx_s3.name
   tags = local.common_tags
 }
 
 resource "aws_s3_bucket" "globo_s3" {
-  bucket        = local.s3_bucket_name
+  bucket = local.s3_bucket_name
 
   force_destroy = true
-  tags          = local.common_tags
+  tags          = merge(local.common_tags, { Name = "${local.name_prefix}-s3" })
 }
 
 resource "aws_s3_bucket_acl" "example" {
@@ -96,14 +96,14 @@ resource "aws_s3_bucket_acl" "example" {
   acl    = "private"
 }
 
-resource "aws_s3_object" "website" {
+resource "aws_s3_object" "website_content" {
+  for_each = {
+    "website" = "/website/index.html"
+    "logo"    = "/website/Globo_logo_Vert.png"
+  }
   bucket = aws_s3_bucket.globo_s3.bucket
-  key    = "/website/index.html"
-  source = "./website/index.html"
+  key    = each.value
+  source = ".${each.value}"
+  tags   = merge(local.common_tags, { Name = "${local.name_prefix}-${each.key}" })
 }
 
-resource "aws_s3_object" "logo" {
-  bucket = aws_s3_bucket.globo_s3.bucket
-  key    = "/website/Globo_logo_Vert.png"
-  source = "./website/Globo_logo_Vert.png"
-}
