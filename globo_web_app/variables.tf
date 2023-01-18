@@ -13,29 +13,21 @@ variable "naming_prefix" {
 variable "aws_instance_sizes" {
   type        = map(string)
   description = "AWS instance sizes"
-  default = {
-    small  = "t2.micro"
-    medium = "t2.small"
-    large  = "t2.large"
-  }
 }
 
 variable "vpc_subnet_count" {
-  type        = number
+  type        = map(number)
   description = "Number of subnets in VPC"
-  default     = 2
 }
 
 variable "instance_count" {
-  type        = number
+  type        = map(number)
   description = "Number of instances"
-  default     = 2
 }
 
 variable "vpc_cidr_block" {
-  type        = string
+  type        = map(string)
   description = "CIDR block for VPC in AWS networking"
-  default     = "10.0.0.0/16"
 }
 
 variable "vpc_enable_dns_hostnames" {
